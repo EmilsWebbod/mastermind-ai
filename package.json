@@ -1,0 +1,7 @@
+{
+  "name": "mastermind-ai",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Emil A. Olsen",
+  "license": "MIT"
+}
