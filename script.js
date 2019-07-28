@@ -4,16 +4,27 @@ import {getModel} from "./ai/model.js";
 const classNames = ['Zero', 'One', 'Two', 'Three'];
 
 async function run() {
-  const model = getModel();
+  const model = await getModel('mastermind');
   tfvis.show.modelSummary({ name: 'Model Architecture' }, model);
+
+  tf.enableProdMode()
+
   await train(model, 50000);
 
-  const [predictions, labels] = validate(model, 10);
-  const classAccuracy = await tfvis.metrics.perClassAccuracy(labels.as1D(), predictions.as1D());
-  const container = { name: 'Accuracy', tab: 'Evaluation'};
-  tfvis.show.perClassAccuracy(container, classAccuracy, classNames);
+  localStorage.clear();
+  await model.save('localstorage://mastermind');
 
-  labels.dispose();
+  const [predictions, labels] = validate(model, 10);
+
+  predictions.print()
+  labels.print()
+
+  const classAccuracy = await tfvis.metrics.accuracy(labels, predictions);
+  const container = { name: 'Accuracy', tab: 'Evaluation'};
+  console.log(classAccuracy)
+
+  console.log('Disposing')
+  tf.disposeVariables();
 }
 
 document.addEventListener('DOMContentLoaded', run);

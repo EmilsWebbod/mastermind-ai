@@ -9,7 +9,7 @@ const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
 export async function train(model, size = 10) {
   const fitCallacks = tfvis.show.fitCallbacks(container, metrics);
   const TRAIN_BATCHES = 512;
-  const EPOCHS = 25;
+  const EPOCHS = 15;
 
   const [xs, ys] = tf.tidy(() => {
     const { inputs, labels } = getData(size);
@@ -31,9 +31,12 @@ export async function train(model, size = 10) {
 }
 
 export function validate(model, size = 10) {
-  const { inputs, labels } = getData(size);
+  const [testXs, labels] = tf.tidy(() => {
+    const { inputs, labels } = getData(size);
+    return [inputs, labels];
+  });
 
-  const predictions = model.predict(inputs);
+  const predictions = model.predict(testXs);
 
   return [predictions, labels];
 }

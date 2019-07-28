@@ -1,11 +1,23 @@
 import {INPUT_LENGTH, OUTPUT_LENGTH} from "../utils/constants.js";
 
-export function getModel() {
+export async function getModel(fromStorage = false) {
+
+  if (fromStorage) {
+    const model = await tf.loadLayersModel(`localstorage://${fromStorage}`);
+    model.compile({
+      optimizer: tf.train.adam(.0005),
+      loss: tf.losses.softmaxCrossEntropy,
+      metrics: ['accuracy']
+    });
+
+    return model;
+  }
+
   const model = tf.sequential();
 
   model.add(tf.layers.dense({
     inputShape: [INPUT_LENGTH],
-    units: 64,
+    units: 128,
     activation: 'relu',
     kernelInitializer: 'varianceScaling',
     trainable: true,
@@ -13,7 +25,7 @@ export function getModel() {
   }));
 
   model.add(tf.layers.dense({
-    units: 64,
+    units: 128,
     activation: 'relu',
     kernelInitializer: 'varianceScaling',
     trainable: true,
