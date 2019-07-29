@@ -3,14 +3,16 @@ import {INPUT_LENGTH, OUTPUT_LENGTH} from "../utils/constants.js";
 export async function getModel(fromStorage = false) {
 
   if (fromStorage) {
-    const model = await tf.loadLayersModel(`localstorage://${fromStorage}`);
-    model.compile({
-      optimizer: tf.train.adam(.0005),
-      loss: tf.losses.softmaxCrossEntropy,
-      metrics: ['accuracy']
-    });
+      try  {
+          const model = await tf.loadLayersModel(`localstorage://${fromStorage}`);
+          model.compile({
+              optimizer: tf.train.adam(.0005),
+              loss: tf.losses.softmaxCrossEntropy,
+              metrics: ['accuracy']
+          });
 
-    return model;
+          return model;
+      } catch (e) {}
   }
 
   const model = tf.sequential();
@@ -38,7 +40,7 @@ export async function getModel(fromStorage = false) {
   }));
 
   model.compile({
-    optimizer: tf.train.adam(.001),
+    optimizer: tf.train.adam(.0002),
     loss: tf.losses.softmaxCrossEntropy,
     metrics: ['accuracy']
   });
